@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 export interface IUser extends mongoose.Document{
-    _id: mongoose.Types.ObjectId;
     name: string;
     email: string;
     password: string;
@@ -11,9 +10,19 @@ export interface IUser extends mongoose.Document{
 
 
 const userSchema = new mongoose.Schema<IUser>({
-    name: { type: String, required: true, },
-    email: { type: String, required: true, unique: true, },
-    password: { type: String, required: true },
+    name: { 
+        type: String, 
+        required: true, 
+    },
+    email: { 
+        type: String, 
+        required: true, 
+        unique: true, 
+    },
+    password: { 
+        type: String, 
+        required: true 
+    },
 });
 
 userSchema.pre("save", async function (next) {

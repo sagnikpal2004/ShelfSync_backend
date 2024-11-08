@@ -22,7 +22,7 @@ Log user in and retrieve JWT Token
   - `401 Unauthorized` if email or password is incorrect
 - **Body**: ```{ "token": <JWTSessionToken> }```
 
-### POST "auth/register"
+### POST "/auth/register"
 Register a new user and retrieve JWT Token
 #### Request
 - **Headers**: None
