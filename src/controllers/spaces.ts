@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import Space from '../models/Space';
+import Space, { ISpace } from '../models/Space';
+import Thing from '../models/Thing';
 
 
 export const getSpaces = async (req: Request, res: Response) => {
@@ -44,11 +45,27 @@ export const createSpace = async (req: Request, res: Response) => {
 
 export const modifySpace = async (req: Request, res: Response) => {
     try {
-        const space = await Space.findOneAndUpdate({ _id: req.id, user_id: req.user!._id }, req.body, { new: true });
+        const space = await Space.findOne({ _id: req.id, user_id: req.user!._id });
         if (!space)
             return res.status(404).json({ message: 'Space not found' });
         
-        res.json(space);
+        if (req.body.superSpace && req.body.superSpace !== space.superSpace!._id.toString()) {
+            const oldSuperSpace = await Space.findOne({ _id: space.superSpace, user_id: req.user!._id });
+            if (!oldSuperSpace)
+                return res.status(404).json({ message: 'Old super space not found' });
+            oldSuperSpace.subSpaces = oldSuperSpace.subSpaces?.filter(subSpace => subSpace._id !== req.id);
+
+            const newSuperSpace = await Space.findOne({ _id: req.body.superSpace, user_id: req.user!._id });
+            if (!newSuperSpace)
+                return res.status(404).json({ message: 'New super space not found' });
+            newSuperSpace.subSpaces?.push(space);
+
+            await oldSuperSpace.save();
+            await newSuperSpace.save();
+        }
+        
+        const updatedSpace = await Space.findOneAndUpdate({ _id: req.id, user_id: req.user!._id }, req.body, { new: true });
+        res.json(updatedSpace);
     } catch (error) {
         res.status(500).json({ error: (error as Error).message });
     }
@@ -59,6 +76,22 @@ export const deleteSpace = async (req: Request, res: Response) => {
         const space = await Space.findOneAndDelete({ _id: req.id, user_id: req.user!._id });
         if (!space)
             return res.status(404).json({ message: 'Space not found' });
+
+        const superSpace = await Space.findOne({ _id: space.superSpace, user_id: req.user!._id });
+        if (!superSpace)
+            return res.status(404).json({ message: 'Super space not found' });
+        superSpace.subSpaces = superSpace.subSpaces?.filter(subSpace => subSpace._id !== req.id);
+
+        const deleteSubSpaces = async (subSpaces: ISpace[]) => {
+            for (const subSpace of subSpaces) {
+                await deleteSubSpaces(subSpace.subSpaces!);
+                await Thing.deleteMany({ space_id: subSpace._id });
+                await subSpace.deleteOne();
+            }
+        }
+        await deleteSubSpaces(space.subSpaces!);
+        await Thing.deleteMany({ space_id: req.id });
+        await space.deleteOne();
         
         res.json({ message: 'Space deleted successfully' });
     } catch (error) {
