@@ -4,7 +4,7 @@ import Space, { ISpace } from '../models/Space';
 
 export const getThings = async (req: Request, res: Response) => {
     try {
-        const { recursive, space_id } = req.query;
+        const { recursive, space: space_id } = req.body;
         
         if (!space_id) {
             const things = await Thing.find({ user_id: req.user!._id });
@@ -19,8 +19,13 @@ export const getThings = async (req: Request, res: Response) => {
 
             const things: IThing[] = []
             const getThings = async (space: ISpace) => {
-                if (space.thingList) things.push(...(await Thing.find({ _id: { $in: space.thingList } })));
-                if (space.subSpaces) for (const subSpace of space.subSpaces) await getThings(subSpace);
+                if (space.thingList) 
+                    things.push(...(await Thing.find({ _id: { $in: space.thingList } })));
+                if (space.subSpaces) 
+                    for (const subSpaceID of space.subSpaces) {
+                        const subSpace = await Space.findById(subSpaceID)
+                        if (subSpace) await getThings(subSpace);
+                    }
             }
 
             await getThings(space);
@@ -45,18 +50,17 @@ export const getThing = async (req: Request, res: Response) => {
 
 export const createThing = async (req: Request, res: Response) => {
     try {
-        const newThing = new Thing({ ...req.body, user_id: req.user!._id });
+        const newThing = await Thing.create({ ...req.body, user_id: req.user!._id });
         
-        const { space_id } = req.body;
-        if (!space_id)
-            return res.status(400).json({ message: 'Space ID is required' });
-        const space = await Space.findOne({ _id: space_id, user_id: req.user!._id });
+        const space = await Space.findOne({ _id: newThing.space, user_id: req.user!._id });
         if (!space)
             return res.status(404).json({ message: 'Space not found' });
-        space.thingList?.push(newThing);
+        if (!space.thingList)
+            space.thingList = [];
 
-        await newThing.save();
+        space.thingList.push(newThing);
         await space.save();
+
         res.status(201).json(newThing);
     } catch (error) {
         res.status(500).json({ error: (error as Error).message });
@@ -69,8 +73,8 @@ export const modifyThing = async (req: Request, res: Response) => {
         if (!thing)
             return res.status(404).json({ message: 'Thing not found' });
 
-        if (req.body.space && req.body.space !== thing.space.toString()) {
-            const oldSpace = await Space.findOne({ _id: thing.space, user_id: req.user!._id });
+        if (req.body.space && req.body.space !== thing.space._id.toString()) {
+            const oldSpace = await Space.findOne({ _id: thing.space._id, user_id: req.user!._id });
             if (!oldSpace)
                 return res.status(404).json({ message: 'Old space not found' });
             oldSpace.thingList = oldSpace.thingList?.filter(t => t._id.toString() !== thing._id.toString());
@@ -84,10 +88,11 @@ export const modifyThing = async (req: Request, res: Response) => {
             await newSpace.save();
         }
 
-        const updatedThing = await Thing.findOneAndUpdate({ _id: req.id, user_id: req}, req.body, { new: true });
+        const updatedThing = await Thing.findOneAndUpdate({ _id: req.id, user_id: req.user!._id}, req.body, { new: true });
         res.json(updatedThing);
     } catch (error) {
         res.status(500).json({ error: (error as Error).message });
+        console.error(error);
     }
 }
 
