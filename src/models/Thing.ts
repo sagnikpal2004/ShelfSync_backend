@@ -25,3 +25,6 @@ const thingSchema = new mongoose.Schema<IThing>({
         type: String,
     },
 });
+
+const Thing = mongoose.model<IThing>("Thing", thingSchema);
+export default Thing;
