@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/spaces", spacesRoutes);
+app.use("/things", thingsRoutes);
 
 app.get("/", (req, res) => {
     res.sendStatus(200);
