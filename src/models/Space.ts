@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { IThing } from "./Thing";
 
 export interface ISpace extends mongoose.Document {
+    _id: mongoose.Types.ObjectId;
     name: string;
     description?: string;
     coords1: number[];

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ISpace } from "./Space";
 
 export interface IThing extends mongoose.Document {
+    _id: mongoose.Types.ObjectId;
     name: string;
     description?: string;
     space: ISpace;
