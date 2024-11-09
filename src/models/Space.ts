@@ -3,6 +3,7 @@ import { IThing } from "./Thing";
 
 export interface ISpace extends mongoose.Document {
     _id: mongoose.Types.ObjectId;
+    user_id: mongoose.Types.ObjectId;
     name: string;
     description?: string;
     coords1: number[];
@@ -14,6 +15,11 @@ export interface ISpace extends mongoose.Document {
 }
 
 const spaceSchema = new mongoose.Schema<ISpace>({
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
     name: {
         type: String,
         required: true,
