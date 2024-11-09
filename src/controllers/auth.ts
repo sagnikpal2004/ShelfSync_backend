@@ -47,3 +47,7 @@ export const register = async (req: Request, res: Response) => {
         token: token
     })
 }
+
+export const getProfile = async (req: Request, res: Response) => {
+    res.json(req.user);
+}

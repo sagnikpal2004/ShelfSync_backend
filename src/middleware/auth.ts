@@ -6,7 +6,8 @@ const secretKey = process.env.JWT_SECRET!;
 
 const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader) return next();
+    if (!authHeader) 
+        return res.sendStatus(401);
 
     const token = authHeader && authHeader.split(' ')[1];
     try {
