@@ -26,7 +26,8 @@ export const getSpace = async (req: Request, res: Response) => {
 
 export const createSpace = async (req: Request, res: Response) => {
     try {
-        const newSpace = new Space({ ...req.body, user_id: req.user!._id });
+        const imageURL = req.file ? (req.file as any).location : undefined;
+        const newSpace = new Space({ ...req.body, user_id: req.user!._id, image: imageURL });
         
         if (!req.body.superSpace)
             return res.status(400).json({ message: 'Super space is required' });
@@ -63,6 +64,9 @@ export const modifySpace = async (req: Request, res: Response) => {
             await oldSuperSpace.save();
             await newSuperSpace.save();
         }
+
+        if (req.file)
+            req.body.image = (req.file as any).location;
         
         const updatedSpace = await Space.findOneAndUpdate({ _id: req.id, user_id: req.user!._id }, req.body, { new: true });
         res.json(updatedSpace);
