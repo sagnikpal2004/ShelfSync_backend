@@ -6,6 +6,7 @@ export interface IUser extends mongoose.Document{
     name: string;
     email: string;
     password: string;
+    universe: mongoose.Types.ObjectId;
     checkPass: (p: string) => Promise<boolean>;
 }
 
@@ -24,6 +25,10 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String, 
         required: true 
     },
+    universe: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Universe" 
+    }
 });
 
 userSchema.pre("save", async function (next) {
