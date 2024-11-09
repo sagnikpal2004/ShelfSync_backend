@@ -53,7 +53,7 @@ export const modifySpace = async (req: Request, res: Response) => {
             const oldSuperSpace = await Space.findOne({ _id: space.superSpace, user_id: req.user!._id });
             if (!oldSuperSpace)
                 return res.status(404).json({ message: 'Old super space not found' });
-            oldSuperSpace.subSpaces = oldSuperSpace.subSpaces?.filter(subSpace => subSpace._id !== req.id);
+            oldSuperSpace.subSpaces = oldSuperSpace.subSpaces?.filter(subSpace => subSpace._id.toString() !== req.id?.toString());
 
             const newSuperSpace = await Space.findOne({ _id: req.body.superSpace, user_id: req.user!._id });
             if (!newSuperSpace)
@@ -73,20 +73,22 @@ export const modifySpace = async (req: Request, res: Response) => {
 
 export const deleteSpace = async (req: Request, res: Response) => {
     try {
-        const space = await Space.findOneAndDelete({ _id: req.id, user_id: req.user!._id });
+        const space = await Space.findOne({ _id: req.id, user_id: req.user!._id });
         if (!space)
             return res.status(404).json({ message: 'Space not found' });
 
         const superSpace = await Space.findOne({ _id: space.superSpace, user_id: req.user!._id });
         if (!superSpace)
             return res.status(404).json({ message: 'Super space not found' });
-        superSpace.subSpaces = superSpace.subSpaces?.filter(subSpace => subSpace._id !== req.id);
+        superSpace.subSpaces = superSpace.subSpaces?.filter(subSpace => subSpace._id.toString() !== req.id!.toString());
+        await superSpace.save();
 
         const deleteSubSpaces = async (subSpaces: ISpace[]) => {
+            if (!subSpaces) return;
             for (const subSpace of subSpaces) {
                 await deleteSubSpaces(subSpace.subSpaces!);
                 await Thing.deleteMany({ space_id: subSpace._id });
-                await subSpace.deleteOne();
+                await Space.deleteOne({ _id: subSpace });
             }
         }
         await deleteSubSpaces(space.subSpaces!);
@@ -95,6 +97,7 @@ export const deleteSpace = async (req: Request, res: Response) => {
         
         res.json({ message: 'Space deleted successfully' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: (error as Error).message });
     }
 }
