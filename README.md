@@ -97,6 +97,7 @@ Create a new space for the authenticated user
     "coords1": number[2],
     "coords2": number[2],
     "superSpace": Space,
+    "image?" File
   }
 #### Response
 - **Status**: 
@@ -113,7 +114,8 @@ Create a new space for the authenticated user
     "coords2": number[2],
     "superSpace": Space,
     "subSpaces": Space[],
-    "thingList": Thing[]
+    "thingList": Thing[],
+    "image?": URL
   }
 
 ### PUT "/spaces/:id"
@@ -130,7 +132,8 @@ Update a specific space by ID for the authenticated user
     "coords2?": number[2],
     "superSpace?": Space,
     "subSpaces?": Space[],
-    "thingList?": Thing[]
+    "thingList?": Thing[],
+    "image?": File
   }
 #### Response
 - **Status**: 
@@ -148,7 +151,8 @@ Update a specific space by ID for the authenticated user
     "coords2": number[2],
     "superSpace": Space,
     "subSpaces": Space[],
-    "thingList": Thing[]
+    "thingList": Thing[],
+    "image?": URL
   }
 ```
 
@@ -233,7 +237,7 @@ Create a new thing for the authenticated user
     "name": "string",
     "description?": "string",
     "space": "string",
-    "image?": "string"
+    "image?": File
   }
 #### Response
 - **Status**: 
@@ -248,7 +252,7 @@ Create a new thing for the authenticated user
     "name": "string",
     "description?": "string",
     "space": Space,
-    "image?": "string"
+    "image?": URL
   }
 
 ### PUT "/things/:id"
@@ -262,7 +266,7 @@ Update a specific thing by ID for the authenticated user
     "name?": "string",
     "description?": "string",
     "space?": "string",
-    "image?": "string"
+    "image?": File
   }
 #### Response
 - **Status**: 
@@ -277,7 +281,7 @@ Update a specific thing by ID for the authenticated user
     "name": "string",
     "description?": "string",
     "space": Space,
-    "image?": "string"
+    "image?": URL
   }
 ```
 
