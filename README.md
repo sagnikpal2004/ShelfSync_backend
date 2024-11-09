@@ -169,3 +169,132 @@ Delete a specific space by ID for the authenticated user
   "message": "Space deleted successfully"
 }
 ```
+
+### GET "/things"
+Retrieve all things for the authenticated user
+#### Request
+- **Headers**: 
+  - `Authorization: Bearer <JWTSessionToken>`
+- **Body**: 
+```json
+{
+  "recursive": boolean, // if true, recursively return all things in subspaces
+  "space_id": "string"  // if provided, returns from specific space
+}
+```
+#### Response
+- **Status**: 
+  - `200 OK` if things are retrieved successfully
+  - `401 Unauthorized` if the user is not authenticated
+  - `404 Not Found` if the space is not found
+- **Body**: 
+  ```json
+  [
+    {
+      "_id": "string",
+      "user_id": "string",
+      "name": "string",
+      "description?": "string",
+      "space": Space,
+      "image?": "string"
+    }
+  ]
+
+### GET "/things/:id"
+Retrieve a specific thing by ID for the authenticated user
+#### Request
+- **Headers**: 
+  - `Authorization: Bearer <JWTSessionToken>`
+- **Body**: None
+#### Response
+- **Status**: 
+  - `200 OK` if thing are retrieved successfully
+  - `401 Unauthorized` if the user is not authenticated
+  - `404 Not Found` if the thing is not found
+- **Body**: 
+  ```json
+  {
+    "_id": "string",
+    "user_id": "string",
+    "name": "string",
+    "description?": "string",
+    "space": Space,
+    "image?": "string"
+  }
+
+### POST "/things"
+Create a new thing for the authenticated user
+#### Request
+- **Headers**: 
+  - `Authorization: Bearer <JWTSessionToken>`
+  - **Body**:
+  ```json
+  {
+    "name": "string",
+    "description?": "string",
+    "space": "string",
+    "image?": "string"
+  }
+#### Response
+- **Status**: 
+  - `201 Created` if thing are created successfully
+  - `401 Unauthorized` if the user is not authenticated
+  - `404 Not Found` if the space is not found
+- **Body**: 
+  ```json
+  {
+    "_id": "string",
+    "user_id": "string",
+    "name": "string",
+    "description?": "string",
+    "space": Space,
+    "image?": "string"
+  }
+
+### PUT "/things/:id"
+Update a specific thing by ID for the authenticated user
+#### Request
+- **Headers**: 
+  - `Authorization: Bearer <JWTSessionToken>`
+- **Body**: 
+  ```json
+  {
+    "name?": "string",
+    "description?": "string",
+    "space?": "string",
+    "image?": "string"
+  }
+#### Response
+- **Status**: 
+- `200 OK` if thing is updated successfully
+- `401 Unauthorized` if the user is not authenticated
+- `404 Not Found` if the thing is not found
+- **Body**:
+```json
+  {
+    "_id": "string",
+    "user_id": "string",
+    "name": "string",
+    "description?": "string",
+    "space": Space,
+    "image?": "string"
+  }
+```
+
+### DELETE "/spaces/:id"
+Delete a specific thing by ID for the authenticated user
+#### Request
+- **Headers**: 
+  - `Authorization: Bearer <JWTSessionToken>`
+- **Body**: None
+#### Response
+- **Status**: 
+- `200 OK` if thing is deleted successfully
+- `401 Unauthorized` if the user is not authenticated
+- `404 Not Found` if the thing is not found
+- **Body**:
+```json
+{
+  "message": "Thing deleted successfully"
+}
+```
