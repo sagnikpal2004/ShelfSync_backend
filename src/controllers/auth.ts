@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import User from "../models/User";
-
+import Space from "../models/Space";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET)
@@ -41,6 +41,16 @@ export const register = async (req: Request, res: Response) => {
     const user = await User.create({ name, email, password });
     if (!user)
         return res.sendStatus(500);
+
+    const universeSpace = await Space.create({
+        user_id: user._id,
+        name: "Universe",
+        coords1: [90, -180],
+        coords2: [-90, 180],
+    })
+
+    user.universe = universeSpace._id;
+    await user.save();
 
     const token = generateToken(user._id.toString());
     res.status(201).json({

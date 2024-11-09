@@ -38,7 +38,6 @@ const spaceSchema = new mongoose.Schema<ISpace>({
     superSpace: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Space",
-        required: true,
     },
     subSpaces: [{
         type: mongoose.Schema.Types.ObjectId,
