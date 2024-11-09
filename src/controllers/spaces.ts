@@ -26,7 +26,14 @@ export const getSpace = async (req: Request, res: Response) => {
 export const createSpace = async (req: Request, res: Response) => {
     try {
         const newSpace = new Space({ ...req.body, user_id: req.user!._id });
+        
+        const superSpace = await Space.findOne({ _id: req.body.superSpace, user_id: req.user!._id });
+        if (!superSpace)
+            return res.status(404).json({ message: 'Super space not found' });
+        superSpace.subSpaces?.push(newSpace);
+
         await newSpace.save();
+        await superSpace.save();
         res.status(201).json(newSpace);
     } catch (error) {
         res.status(500).json({ error: (error as Error).message });
