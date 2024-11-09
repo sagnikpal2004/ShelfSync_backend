@@ -50,7 +50,8 @@ export const getThing = async (req: Request, res: Response) => {
 
 export const createThing = async (req: Request, res: Response) => {
     try {
-        const newThing = await Thing.create({ ...req.body, user_id: req.user!._id });
+        const imageURL = req.file ? (req.file as any).location : undefined;
+        const newThing = await Thing.create({ ...req.body, user_id: req.user!._id, image: imageURL });
         
         const space = await Space.findOne({ _id: newThing.space, user_id: req.user!._id });
         if (!space)
@@ -87,6 +88,9 @@ export const modifyThing = async (req: Request, res: Response) => {
             await oldSpace.save();
             await newSpace.save();
         }
+
+        if (req.file)
+            req.body.image = (req.file as any).location;
 
         const updatedThing = await Thing.findOneAndUpdate({ _id: req.id, user_id: req.user!._id}, req.body, { new: true });
         res.json(updatedThing);
