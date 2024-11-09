@@ -8,12 +8,17 @@ import {
     deleteThing
 } from "../controllers/things";
 
+import authenticateToken from "../middleware/auth";
+import validateObjectId from "../middleware/object_id";
+
 const router = express.Router();
 
+router.use(authenticateToken);
+
 router.get("/", getThings);
-router.get("/:id", getThing);
+router.get("/:id", validateObjectId, getThing);
 router.post("/", createThing);
-router.put("/:id", modifyThing);
-router.delete("/:id", deleteThing);
+router.put("/:id", validateObjectId, modifyThing);
+router.delete("/:id", validateObjectId, deleteThing);
 
 export default router;
