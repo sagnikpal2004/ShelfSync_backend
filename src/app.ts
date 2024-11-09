@@ -7,7 +7,7 @@ mongoose.connect(process.env.MONGO_URI!)
 
 import authRoutes from "./routes/auth";
 import spacesRoutes from "./routes/spaces";
-
+import thingsRoutes from "./routes/things";
 
 const app = express();
 const PORT = 3000;
