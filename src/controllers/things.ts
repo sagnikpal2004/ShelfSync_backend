@@ -4,7 +4,7 @@ import Space, { ISpace } from '../models/Space';
 
 export const getThings = async (req: Request, res: Response) => {
     try {
-        const { recursive, space: space_id } = req.body;
+        const { recursive, space: space_id } = req.query;
         
         if (!space_id) {
             const things = await Thing.find({ user_id: req.user!._id });

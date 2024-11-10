@@ -183,13 +183,11 @@ Retrieve all things for the authenticated user
 #### Request
 - **Headers**: 
   - `Authorization: Bearer <JWTSessionToken>`
-- **Body**: 
-```json
-{
-  "recursive": boolean, // if true, recursively return all things in subspaces
-  "space_id": "string"  // if provided, returns from specific space
-}
-```
+- **Query Params**: 
+  - `?recursive`: boolean, if true, recursively return all things in subspaces
+  - `?space_id`: string, if provided, returns from specific space
+- **Body**: None
+
 #### Response
 - **Status**: 
   - `200 OK` if things are retrieved successfully
