@@ -1,5 +1,9 @@
 # ShelfSync_backend
 
+## Databases
+- MongoDB Atlas
+- AWS S3
+
 ## API Documentation
 
 ### GET "/"
