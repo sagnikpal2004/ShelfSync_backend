@@ -185,7 +185,7 @@ Retrieve all things for the authenticated user
   - `Authorization: Bearer <JWTSessionToken>`
 - **Query Params**: 
   - `?recursive`: boolean, if true, recursively return all things in subspaces
-  - `?space_id`: string, if provided, returns from specific space
+  - `?space`: string, if provided, returns from specific space
 - **Body**: None
 
 #### Response
