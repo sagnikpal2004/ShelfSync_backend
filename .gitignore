@@ -137,3 +137,5 @@ dist
 **/.terraform.tfstate.lock.info
 **/*.tfvars
 **.backup
+
+storage/

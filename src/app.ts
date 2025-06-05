@@ -18,6 +18,7 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(uploadImage);
+app.use("/storage", express.static("storage"));
 
 app.use("/auth", authRoutes);
 app.use("/spaces", spacesRoutes);
